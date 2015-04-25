@@ -1,0 +1,17 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Kalendar Widget
+Type=Service
+ServiceTypes=Plasma/Applet
+Icon=calendar
+X-Plasma-API=python
+X-Plasma-MainScript=code/main.py
+X-KDE-PluginInfo-Author=Omair Mohammed Abdullah
+X-KDE-PluginInfo-Email=omairabdullah@gmail.com
+X-KDE-PluginInfo-Name=kalendar
+X-KDE-PluginInfo-Version=1.0
+X-KDE-PluginInfo-Website=http://plasma.kde.org/
+X-KDE-PluginInfo-Category=Date and Time
+X-KDE-PluginInfo-Depends=
+X-KDE-PluginInfo-License=GPL
+X-KDE-PluginInfo-EnabledByDefault=true

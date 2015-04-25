@@ -1,0 +1,133 @@
+1. Introduction
+===============
+
+This miniproject implements a KDE4 Calendar Widget (called Kalendar - not the most original name!).
+It is a plasmoid implemented using KDE's plasma widget library and PyQt. The main task of the widget is to 
+display event and todo information from Kontact. Kontact is the KDE4 Calendaring and Personal Information Management software.
+
+Input-Output
+------------
+The widget resides on the desktop and is typically started automatically when the user logs in. It displays the current date 
+in the calendar and the event information for the day. The user can select any date by either clicking on it in the calendar
+or typing it in. The events for the selected day along with their respective times are then displayed.
+
+The user can also input an event to add to Kontact. 
+
+	OROROROR
+	++++++++
+The are two basic use cases:
+
+1. The user selects a date. The widget displays the event and todo information for that day along with the times when the events occur.
+2. The user adds a new event to the currently selected date. This is done by typing a description of the event and selecting its time.
+When the user clicks the 'Add Event' button, the event is added to Kontact. Further details of the event can be edited from Kontact.
+
+2. Motivation
+=============
+I often heard very good reviews of Qt (the GUI toolkit used by KDE), praising its clean API and good design. Thus I wanted to learn how to 
+do GUI programming in Qt.
+
+Opening up a big application and waiting for it to load just so that you can add a simple note or reminder seems overkill. A widget 
+that is always running and present on the desktop is a natural choice for such a task. Considering this, it was surprising that
+no such widget existed that could integrate with Kontact. A widget for Google Calendar exists and there are numerous note-taking widgets. 
+But KDE4 which is all about the complete desktop experience was missing this application.
+
+Such a widget was requested numerous number of times on sites such as kde-look.org.
+
+I chose Python as the programming language of choice along with its Qt bindings. This resulted in a faster development cycle along
+with a much gentler learning curve. 
+
+3. Proposal
+==============================
+Initially the widget was proposed to have the following features:
+a. The widget displays a calendar.
+b. The widget fetches the event information from Kontact and displays it.
+c. The widget highlights the dates on which the events have occurred in the calendar.
+d. The widget allows the user to add a new event. This gets updated in Kontact.
+
+All these features have been successfully implemented!
+
+Additionally, a few more features were proposed:
+a. Displaying the ToDo list.
+b. Editing the events.
+c. Popup reminder of an upcoming event.
+d. Support for different types of calendars (Hebrew, Hijri etc.)
+
+From this list, the first additional feature was implemented. 
+
+The editing of events from the widget was deemed unnecessary as it added too much interface clutter. Also, the KDE Reminder Daemon
+already implements the functionality of the third item. Support for different calendars may be seen in future versions.
+
+4. Time Taken
+=============
+
+Initial Review and Learning - approx. 4-6 days
+This included learning the Qt API using tutorials, KDE and Plasma specific details as well as the information about how to access Kontact
+information.
+
+GUI design and Implementation - 2 days
+
+Reading and storing - 2 days
+This includes reading the Kontact data and writing the edits back.
+
+Testing and Documentation - 1 day
+
+5. Design
+=========
+There are two main classes in the design: Kalendar and Ui_calendar. The Kalendar class does all the work of fetching the date, handling events etc. whereas the Ui_calendar class handles the drawing of the UI and setting up the variables for the widgets.
+
+The Kalendar is divided into various functions, each of which perform a particular task.
+
+When the widget initialises, the init() method is called to parse the data, show the UI and specify the callback functions
+for the widgets. There are two main signals - one for the 'Add Widget' button clicked and another for the 'calendar widget' date changed.
+These are connected to the slots (callback functions) addItem() and showEvents() respectively.
+There is also a timer added to reload the contact data every few minutes.
+
+The important class methods and members are explained below:
+The parseCalFile() and saveCalFile() do exactly what they are named.
+parseCalFile() - open the Kontact data file (stored in the user's home directory) and parses it. This is then stored in a class member variable called 'parsedCal'.
+saveCalFile() - does the job of writing back the data stored in 'parsedCal' back to the data file.
+
+addEvent() - This function is called when the user types some text and clicks the 'Add Widget' button. This function gets the selected date and time from the respective widgets and adds a new node to the parsed data structure. It then saves the file
+showEvent() - This function is called at load or when a date is selected. It gets the date and time from the parsed data structure. It then adds the events which are happening today to the list widget to display them.
+
+
+6. Implementation
+=================
+
+KDE Plasma allows widgets to be developed in either C++, Python, Ruby or ECMAScript. Python was the programming language
+of choice because of familiarity as well as the numerous bindings and packages available for it.
+
+Specifically, PyQt and PyKDE bindings have been used. They provide easy access to the Qt API and make the implementation of
+the GUI simpler. In addition, Plasma also has a few classes to develop widgets. 
+
+The 'vobject' package was used for reading iCal and vCard files.
+
+The pyexamplecalendar widget from the KDE SVN repository was the basis of the code. 
+
+Tools used in development include:
+Vim, Kate, plasmoidviewer, Qt Designer 4, pykdeuic4, epydoc.
+
+All the packages used above have free and open source licences.
+
+Lines of code written - approximately 200-250
+
+7. Challenges
+=============
+Writing an application that integrates with another one is usually not simple. There are many different considerations to keep in mind
+including data formats and that application's API.
+
+In my case, learning about how Plasma works was pretty challenging. Aside from normal Qt Widgets (that you embed in forms etc.), you have KDE widgets which are an extension of Qt widgets and then you have Plasma widgets which are a further extension.
+
+The Plasma technology is in heavy development and still volatile. For example, between KDE 4.2 (stable) and KDE 4.4 (unstable), there have been approximately 50 new classes added to Plasma.
+Due to this, tutorials for doing any task are scarce. I had only the documentation to work with. Also, most of the documentation is written for C++. This was a big challenge that taught me how to effectively use documentation to get what I am looking for.
+
+8. Conclusion and Future Work
+=============================
+The widget will soon be uploaded on www.kde-look.org for others to use. It is GPLv2 licensed so that others can modify it. 
+
+The widget uses the KDE controls as many controls have not yet been ported to Plasma. Future versions are expected to use Plasma controls
+for better look and feel. The initial version is a bit clunky with respect to the GUI but future versions are expected to look better.
+
+Akonadi is a server that is being developed to store all the KDE PIM and other data in a centralized manner.
+The current version of the widget uses an Akonadi Compatibility bridge as work to integrate Kontact under Akonadi is still under way.
+Full integration may be implemented when the development become stable.
